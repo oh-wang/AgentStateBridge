@@ -7,6 +7,7 @@
 首次公开版本：
 
 - 通过 macOS Accessibility API 观察 ChatGPT；
+- 在 ChatGPT 简体中文界面完成真实状态验证；
 - 支持 `inactive`、`idle`、`composing`、`reasoning`、`working`、
   `completed` 和 `unknown`；
 - 提供可嵌入的 `AgentStateRuntime`；

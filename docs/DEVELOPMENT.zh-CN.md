@@ -102,6 +102,22 @@ swift run AgentStateExampleConsumer --file examples/mock-state.json
 
 扫描在后台执行。短时间重复发来的刷新请求会被合并，避免多个完整扫描同时运行。
 
+### 当前语言范围
+
+真实界面验证目前只覆盖 ChatGPT 的简体中文界面。已经确认的主要信号是：
+
+```text
+输入框：AXTextArea，标题“随心输入”
+回答中：AXButton，标题“停止”
+思考中：准确文字“正在思考”，并同时存在“停止”按钮
+```
+
+代码中存在 `Ask anything`、`Stop`、`Thinking` 等英文候选名称，但这些只经过构造数据
+的自动测试，没有在英文版 ChatGPT 中实测。繁体中文和其他语言尚未适配。
+
+适配新语言时，不应只翻译现有文字。应先切换 ChatGPT 的实际界面语言，再用 Inspector
+确认辅助功能接口暴露的控件名称，因为屏幕上看到的文字不一定等于系统读取到的属性。
+
 需要研究新控件时：
 
 1. 临时显示控件名称；
@@ -112,7 +128,8 @@ swift run AgentStateExampleConsumer --file examples/mock-state.json
 6. 同时编写命中和不应命中的测试；
 7. 用真实 ChatGPT 界面验证。
 
-更详细的方法见[界面组件识别经验](COMPONENT-DETECTION.zh-CN.md)。
+识别规则尽量使用两个互相补充的线索。例如“正在思考”必须同时配合“停止”按钮，
+避免聊天正文中出现相同文字造成误判。
 
 ## 发布安装包
 

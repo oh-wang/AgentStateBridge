@@ -16,6 +16,20 @@ ChatGPT 桌面应用，把界面变化整理成简单、稳定的状态，供桌
 
 这是一个非官方项目，与 OpenAI 没有从属或授权关系。ChatGPT 是其各自权利人的商标。
 
+## 当前兼容范围
+
+目前只在 ChatGPT macOS 客户端的**简体中文界面**完成了真实使用验证。
+
+代码中预留了一些英文控件名称，并有对应的单元测试，但还没有在英文版 ChatGPT
+界面中实际验证。繁体中文和其他语言也尚未适配。因此，当前可以确认支持的是：
+
+```text
+macOS + ChatGPT 简体中文界面
+```
+
+其他语言环境可能部分可用，但不应视为正式支持。若 ChatGPT 更新界面结构或控件名称，
+也可能需要调整识别规则。
+
 ## 工作方式
 
 ```text
@@ -112,11 +126,10 @@ JavaScript 示例测试：
 node --test examples/agent-state-controller.test.mjs
 ```
 
-当前共有 32 个 Swift 测试和 3 个 JavaScript 测试。
-
 ## 当前限制
 
 - 目前只实现了 ChatGPT macOS 客户端适配器；
+- 目前只在简体中文界面完成真实验证；
 - 状态识别依赖 ChatGPT 暴露的辅助功能控件，客户端更新后可能需要调整规则；
 - `completed` 会保留最多 4 秒，方便消费者显示完成动作；
 - 程序异常退出后，`state.json` 可能暂时保留最后一次状态；
@@ -131,8 +144,6 @@ node --test examples/agent-state-controller.test.mjs
 - [开发与运行](docs/DEVELOPMENT.zh-CN.md)
 - [本地状态接口](docs/PROTOCOL.zh-CN.md)
 - [隐私说明](docs/PRIVACY.zh-CN.md)
-- [ChatGPT 实测信号](docs/OBSERVATIONS.zh-CN.md)
-- [增加界面组件识别的方法](docs/COMPONENT-DETECTION.zh-CN.md)
 - [版本变化](CHANGELOG.md)
 
 ## 许可证
