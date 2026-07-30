@@ -1,0 +1,27 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: macos-26
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Show tool versions
+        run: |
+          swift --version
+          node --version
+
+      - name: Run Swift tests
+        run: swift test --disable-sandbox
+
+      - name: Run JavaScript tests
+        run: node --test examples/agent-state-controller.test.mjs

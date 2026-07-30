@@ -1,0 +1,16 @@
+{
+  "application" : {
+    "bundleId" : "com.openai.codex",
+    "id" : "chatgpt",
+    "version" : "26.721.41059"
+  },
+  "confidence" : 0.96,
+  "evidence" : [
+    "stop-button-present"
+  ],
+  "previousState" : "composing",
+  "schemaVersion" : 1,
+  "sequence" : 42,
+  "state" : "working",
+  "timestamp" : "2026-07-27T12:00:00+08:00"
+}

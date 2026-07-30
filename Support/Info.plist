@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>zh_CN</string>
+    <key>CFBundleExecutable</key>
+    <string>AgentStateInspector</string>
+    <key>CFBundleIdentifier</key>
+    <string>local.agentstatebridge.inspector</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>Agent State Inspector</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>NSAccessibilityUsageDescription</key>
+    <string>读取 ChatGPT 窗口中的控件变化，用于判断应用当前是否正在工作。</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © 2026 AgentStateBridge contributors.</string>
+</dict>
+</plist>
