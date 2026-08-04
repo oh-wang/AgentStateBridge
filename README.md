@@ -134,6 +134,22 @@ open .build/AgentStatePet.app
 第一次运行仍需在“系统设置 → 隐私与安全性 → 辅助功能”中允许 **Agent State Pet**。
 允许后重新启动桌宠，它会自动观察 ChatGPT（当前正式验证范围仍是简体中文界面）。
 
+### 与 Codex 一键启动
+
+如果希望一次打开 Codex 和桌宠，可以运行：
+
+```bash
+./scripts/start-codex-with-pet.sh
+```
+
+如果希望从 Dock 打开 Codex 时自动打开桌宠，可在 macOS“快捷指令”中创建个人自动化：
+
+1. 新建“App”自动化，选择 **Codex**，触发条件选“打开时”；
+2. 添加“打开 App”操作，选择 `.build/AgentStatePet.app`；
+3. 关闭“运行前询问”，保存自动化。
+
+桌宠启动后会先显示默认动画；Codex 打开并获得辅助功能权限后，会自动切换到对应状态动画。
+
 ## 测试
 
 Swift 测试：
