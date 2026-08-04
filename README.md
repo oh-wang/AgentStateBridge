@@ -105,9 +105,34 @@ Developer ID 签名、公证的正式安装包。
 - `AgentStateBridgeService`：JSON 文件与 Unix socket；
 - `AgentStateRuntime`：把观察、判断和输出串起来的无界面运行模块；
 - `AgentStateInspector`：用于授权、观察和诊断的 macOS 应用；
+- `AgentStatePet`：根据状态播放 GIF 动画的透明桌宠应用；
 - `AgentStateExampleConsumer`：读取状态文件的命令行示例。
 
 `AgentStateRuntime` 不依赖 SwiftUI，可以嵌入其他 macOS 应用。
+
+## 运行桌宠
+
+仓库包含一个独立的透明桌宠应用。它复用 `AgentStateRuntime`，不会复制状态判断逻辑，
+也不会上传聊天内容：
+
+```bash
+./scripts/build-pet-app.sh release
+open .build/AgentStatePet.app
+```
+
+桌宠窗口默认置顶、透明、可拖动。右键桌宠可以退出。动画映射如下：
+
+| 状态 | 动画 |
+|---|---|
+| `idle` | `06.gif`，微笑待机 |
+| `composing` | `05.gif`，集中输入 |
+| `reasoning` | `03.gif`，阅读思考 |
+| `working` | `01.gif`，持续工作 |
+| `completed` | `04.gif`，完成后放松 |
+| `inactive` / `unknown` | `02.gif`，默认动作 |
+
+第一次运行仍需在“系统设置 → 隐私与安全性 → 辅助功能”中允许 **Agent State Pet**。
+允许后重新启动桌宠，它会自动观察 ChatGPT（当前正式验证范围仍是简体中文界面）。
 
 ## 测试
 

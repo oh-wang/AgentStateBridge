@@ -13,6 +13,7 @@ let package = Package(
         .library(name: "AgentStateBridgeService", targets: ["AgentStateBridgeService"]),
         .library(name: "AgentStateRuntime", targets: ["AgentStateRuntime"]),
         .executable(name: "AgentStateInspector", targets: ["AgentStateInspector"]),
+        .executable(name: "AgentStatePet", targets: ["AgentStatePet"]),
         .executable(
             name: "AgentStateExampleConsumer",
             targets: ["AgentStateExampleConsumer"]
@@ -52,6 +53,22 @@ let package = Package(
             ],
             linkerSettings: [
                 .linkedFramework("AppKit"),
+                .linkedFramework("SwiftUI")
+            ]
+        ),
+        .executableTarget(
+            name: "AgentStatePet",
+            dependencies: [
+                "AgentStateCore",
+                "AgentStateRuntime"
+            ],
+            path: "Sources/AgentStatePet",
+            resources: [
+                .process("Resources")
+            ],
+            linkerSettings: [
+                .linkedFramework("AppKit"),
+                .linkedFramework("ImageIO"),
                 .linkedFramework("SwiftUI")
             ]
         ),
