@@ -8,7 +8,7 @@ import SwiftUI
 @MainActor
 final class InspectorViewModel: ObservableObject {
     @Published private(set) var permissionGranted = false
-    @Published private(set) var chatGPT: ChatGPTRunningApplication?
+    @Published private(set) var codex: CodexRunningApplication?
     @Published private(set) var snapshot: InspectionSnapshot?
     @Published private(set) var changes: [ObservedChange] = []
     @Published private(set) var errorMessage: String?
@@ -106,7 +106,7 @@ final class InspectorViewModel: ObservableObject {
 
     private func syncFromRuntime() {
         permissionGranted = runtime.permissionGranted
-        chatGPT = runtime.chatGPT
+        codex = runtime.codex
         snapshot = runtime.latestInspectionSnapshot
         errorMessage = runtime.runtimeErrorMessage
         isObserving = runtime.isObserving

@@ -8,6 +8,10 @@ import SwiftUI
 struct AgentStatePetApp: App {
     @StateObject private var model = PetViewModel()
 
+    init() {
+        NSApplication.shared.setActivationPolicy(.accessory)
+    }
+
     var body: some Scene {
         WindowGroup("桌宠") {
             PetView(model: model)
@@ -28,6 +32,9 @@ final class PetViewModel: ObservableObject {
         runtime.onSnapshot = { [weak self] snapshot in
             self?.state = AgentActivityState(rawValue: snapshot.state) ?? .unknown
             self?.sequence = UInt64(clamping: snapshot.sequence)
+        }
+        runtime.onCodexTerminated = {
+            NSApplication.shared.terminate(nil)
         }
         runtime.start()
         if let snapshot = runtime.currentSnapshot {
@@ -56,13 +63,6 @@ private struct PetView: View {
                 .help(model.state.displayName)
         }
         .background(WindowConfigurator())
-        .contextMenu {
-            Text("AgentStateBridge 桌宠")
-            Divider()
-            Button("退出桌宠") {
-                NSApplication.shared.terminate(nil)
-            }
-        }
     }
 }
 
@@ -79,6 +79,8 @@ private struct AnimatedGIFView: NSViewRepresentable {
 }
 
 private final class GIFPlayerView: NSView {
+    private static let displaySize = NSSize(width: 180, height: 180)
+
     private let imageView = NSImageView()
     private var loadedResource: String?
     private var frames: [NSImage] = []
@@ -104,6 +106,40 @@ private final class GIFPlayerView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    override func hitTest(_ point: NSPoint) -> NSView? {
+        guard bounds.contains(point) else { return nil }
+        return self
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        window?.performDrag(with: event)
+    }
+
+    override func rightMouseDown(with event: NSEvent) {
+        let menu = NSMenu()
+        let heading = NSMenuItem(
+            title: "AgentStateBridge 桌宠",
+            action: nil,
+            keyEquivalent: ""
+        )
+        heading.isEnabled = false
+        menu.addItem(heading)
+        menu.addItem(.separator())
+
+        let quitItem = NSMenuItem(
+            title: "退出桌宠",
+            action: #selector(terminatePet),
+            keyEquivalent: "q"
+        )
+        quitItem.target = self
+        menu.addItem(quitItem)
+        NSMenu.popUpContextMenu(menu, with: event, for: self)
+    }
+
+    @objc private func terminatePet() {
+        NSApplication.shared.terminate(nil)
+    }
+
     func load(resourceName: String) {
         guard loadedResource != resourceName else { return }
         loadedResource = resourceName
@@ -124,7 +160,7 @@ private final class GIFPlayerView: NSView {
             guard let cgImage = CGImageSourceCreateImageAtIndex(source, index, nil) else {
                 continue
             }
-            frames.append(NSImage(cgImage: cgImage, size: NSSize(width: 360, height: 360)))
+            frames.append(NSImage(cgImage: cgImage, size: Self.displaySize))
             delays.append(frameDelay(source: source, index: index))
         }
 
@@ -185,6 +221,10 @@ private struct WindowConfigurator: NSViewRepresentable {
 }
 
 private final class WindowConfiguringView: NSView {
+    private var hasPlacedInitialWindow = false
+    private var placementScheduled = false
+    private var placementAttemptCount = 0
+
     override func viewDidMoveToWindow() {
         super.viewDidMoveToWindow()
         configureWindowIfNeeded()
@@ -198,6 +238,8 @@ private final class WindowConfiguringView: NSView {
         window.level = .floating
         window.isMovable = true
         window.isMovableByWindowBackground = true
+        window.isRestorable = false
+        window.setFrameAutosaveName("")
 
         // SwiftUI creates a titled window by default. Replacing its style mask
         // removes the traffic-light controls instead of merely hiding them.
@@ -206,6 +248,47 @@ private final class WindowConfiguringView: NSView {
         window.standardWindowButton(.miniaturizeButton)?.isHidden = true
         window.standardWindowButton(.zoomButton)?.isHidden = true
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+
+        scheduleInitialPlacement()
+    }
+
+    private func scheduleInitialPlacement() {
+        guard !hasPlacedInitialWindow, !placementScheduled else {
+            return
+        }
+
+        placementScheduled = true
+        placementAttemptCount += 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            guard let self else { return }
+            self.placementScheduled = false
+            if !self.placeWindowAtBottomRightIfNeeded(), self.placementAttemptCount < 10 {
+                self.scheduleInitialPlacement()
+            }
+        }
+    }
+
+    @discardableResult
+    private func placeWindowAtBottomRightIfNeeded() -> Bool {
+        guard !hasPlacedInitialWindow,
+              let window,
+              window.isVisible,
+              let screen = window.screen ?? NSScreen.main,
+              window.frame.width > 1,
+              window.frame.height > 1
+        else {
+            return false
+        }
+
+        let visibleFrame = screen.visibleFrame
+        let margin: CGFloat = 24
+        let origin = NSPoint(
+            x: visibleFrame.maxX - window.frame.width - margin,
+            y: visibleFrame.minY + margin
+        )
+        window.setFrameOrigin(origin)
+        hasPlacedInitialWindow = true
+        return true
     }
 }
 
@@ -214,10 +297,13 @@ private extension AgentActivityState {
         switch self {
         case .idle: "06"
         case .composing: "05"
-        case .reasoning: "03"
+        case .reasoning: "04"
         case .working: "01"
-        case .completed: "04"
-        case .inactive, .unknown: "02"
+        case .completed: "03"
+        case .inactive: "02"
+        // During normal launch, accessibility inspection briefly reports
+        // unknown while Codex's accessibility tree becomes available.
+        case .unknown: "06"
         }
     }
 

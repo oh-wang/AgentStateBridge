@@ -12,8 +12,8 @@ struct InspectorView: View {
 
             if !model.permissionGranted {
                 permissionView
-            } else if model.chatGPT == nil {
-                chatGPTNotRunningView
+            } else if model.codex == nil {
+                codexNotRunningView
             } else {
                 content
             }
@@ -35,14 +35,14 @@ struct InspectorView: View {
             Divider().frame(height: 20)
 
             Label(
-                model.chatGPT == nil ? "ChatGPT 未运行" : "ChatGPT 正在运行",
-                systemImage: model.chatGPT == nil ? "xmark.circle" : "checkmark.circle.fill"
+                model.codex == nil ? "Codex 未运行" : "Codex 正在运行",
+                systemImage: model.codex == nil ? "xmark.circle" : "checkmark.circle.fill"
             )
 
-            if let chatGPT = model.chatGPT {
-                Text("版本 \(chatGPT.version ?? "未知")")
+            if let codex = model.codex {
+                Text("版本 \(codex.version ?? "未知")")
                     .foregroundStyle(.secondary)
-                Text(chatGPT.isFrontmost ? "当前在前台" : "当前在后台")
+                Text(codex.isFrontmost ? "当前在前台" : "当前在后台")
                     .foregroundStyle(.secondary)
             }
 
@@ -72,7 +72,7 @@ struct InspectorView: View {
             Button("重新读取") {
                 model.refreshTree()
             }
-            .disabled(!model.permissionGranted || model.chatGPT == nil)
+            .disabled(!model.permissionGranted || model.codex == nil)
         }
         .padding(12)
     }
@@ -81,7 +81,7 @@ struct InspectorView: View {
         ContentUnavailableView {
             Label("需要辅助功能权限", systemImage: "hand.raised.fill")
         } description: {
-            Text("这个权限让检查器看到 ChatGPT 窗口里的控件。它不会监听键盘，也不会录制屏幕。")
+            Text("这个权限让检查器看到 Codex 窗口里的控件。它不会监听键盘，也不会录制屏幕。")
         } actions: {
             HStack {
                 Button("请求权限") {
@@ -100,11 +100,11 @@ struct InspectorView: View {
         }
     }
 
-    private var chatGPTNotRunningView: some View {
+    private var codexNotRunningView: some View {
         ContentUnavailableView {
-            Label("没有找到 ChatGPT", systemImage: "bubble.left.and.exclamationmark.bubble.right")
+            Label("没有找到 Codex", systemImage: "bubble.left.and.exclamationmark.bubble.right")
         } description: {
-            Text("请先打开 ChatGPT，然后点下面的按钮。")
+            Text("请先打开 Codex，然后点下面的按钮。")
         } actions: {
             Button("重新查找") {
                 model.refreshApplicationStatus()
@@ -189,7 +189,7 @@ struct InspectorView: View {
 
     private var nodeList: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("ChatGPT 界面里的控件")
+            Text("Codex 界面里的控件")
                 .font(.headline)
                 .padding(12)
 
@@ -232,7 +232,7 @@ struct InspectorView: View {
                 ContentUnavailableView(
                     "还没有变化",
                     systemImage: "waveform.path",
-                    description: Text("观察会自动开始；请在 ChatGPT 中点击或输入。")
+                    description: Text("观察会自动开始；请在 Codex 中点击或输入。")
                 )
             } else {
                 List {

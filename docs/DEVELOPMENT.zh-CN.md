@@ -7,7 +7,7 @@
 - macOS 14 或更高版本；
 - 完整 Xcode；
 - Swift 6.2 或兼容版本；
-- ChatGPT macOS 客户端。
+- Codex macOS 客户端。
 
 先进入仓库根目录：
 
@@ -43,10 +43,10 @@ open .build/AgentStateInspector.app
 1. 点击“请求权限”；
 2. 在“系统设置 → 隐私与安全性 → 辅助功能”中允许 Agent State Inspector；
 3. 回到检查器，重新检查权限；
-4. 打开 ChatGPT；
+4. 打开 Codex；
 5. 检查器会自动开始观察。
 
-左侧显示 ChatGPT 暴露的辅助功能控件，右侧显示通知和最近的状态变化。
+左侧显示 Codex 暴露的辅助功能控件，右侧显示通知和最近的状态变化。
 “重新读取”会立即启动一次新检查。
 
 检查器默认隐藏文字。临时开启“显示控件名称”只应用于当前运行，用于研究按钮名称；
@@ -104,7 +104,7 @@ swift run AgentStateExampleConsumer --file examples/mock-state.json
 
 ### 当前语言范围
 
-真实界面验证目前只覆盖 ChatGPT 的简体中文界面。已经确认的主要信号是：
+真实界面验证目前只覆盖 Codex 的简体中文界面。已经确认的主要信号是：
 
 ```text
 输入框：AXTextArea，标题“随心输入”
@@ -113,20 +113,20 @@ swift run AgentStateExampleConsumer --file examples/mock-state.json
 ```
 
 代码中存在 `Ask anything`、`Stop`、`Thinking` 等英文候选名称，但这些只经过构造数据
-的自动测试，没有在英文版 ChatGPT 中实测。繁体中文和其他语言尚未适配。
+的自动测试，没有在英文版 Codex 中实测。繁体中文和其他语言尚未适配。
 
-适配新语言时，不应只翻译现有文字。应先切换 ChatGPT 的实际界面语言，再用 Inspector
+适配新语言时，不应只翻译现有文字。应先切换 Codex 的实际界面语言，再用 Inspector
 确认辅助功能接口暴露的控件名称，因为屏幕上看到的文字不一定等于系统读取到的属性。
 
 需要研究新控件时：
 
 1. 临时显示控件名称；
-2. 在 ChatGPT 中触发目标功能；
+2. 在 Codex 中触发目标功能；
 3. 找出出现和消失的控件；
 4. 优先使用准确文字、控件类型或 identifier；
 5. 增加第二个保护条件，避免聊天正文导致误判；
 6. 同时编写命中和不应命中的测试；
-7. 用真实 ChatGPT 界面验证。
+7. 用真实 Codex 界面验证。
 
 识别规则尽量使用两个互相补充的线索。例如“正在思考”必须同时配合“停止”按钮，
 避免聊天正文中出现相同文字造成误判。

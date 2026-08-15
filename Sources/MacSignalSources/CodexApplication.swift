@@ -1,7 +1,7 @@
 import AppKit
 import Foundation
 
-public struct ChatGPTRunningApplication: Sendable, Equatable {
+public struct CodexRunningApplication: Sendable, Equatable {
     public static let bundleIdentifier = "com.openai.codex"
 
     public let processIdentifier: pid_t
@@ -16,10 +16,10 @@ public struct ChatGPTRunningApplication: Sendable, Equatable {
 }
 
 @MainActor
-public enum ChatGPTApplicationLocator {
-    public static func runningApplication() -> ChatGPTRunningApplication? {
+public enum CodexApplicationLocator {
+    public static func runningApplication() -> CodexRunningApplication? {
         guard let application = NSRunningApplication
-            .runningApplications(withBundleIdentifier: ChatGPTRunningApplication.bundleIdentifier)
+            .runningApplications(withBundleIdentifier: CodexRunningApplication.bundleIdentifier)
             .first
         else {
             return nil
@@ -33,7 +33,7 @@ public enum ChatGPTApplicationLocator {
             version = nil
         }
 
-        return ChatGPTRunningApplication(
+        return CodexRunningApplication(
             processIdentifier: application.processIdentifier,
             version: version,
             isFrontmost: application.isActive

@@ -6,8 +6,8 @@ AgentStateBridge 被拆成几个相互独立的小模块。这样既能运行诊
 ## 数据流程
 
 ```text
-ChatGPTApplicationLocator
-    找到 ChatGPT 进程
+CodexApplicationLocator
+    找到 Codex 进程
             ↓
 AXChangeMonitor + AXTreeReader
     接收界面通知并读取辅助功能控件
@@ -35,14 +35,14 @@ AgentStateRuntime
 - JSON 协议模型；
 - 文字脱敏工具。
 
-这部分可以只使用构造出的测试快照运行，不需要真的启动 ChatGPT。
+这部分可以只使用构造出的测试快照运行，不需要真的启动 Codex。
 
 ## MacSignalSources
 
 该模块负责与 macOS 交互：
 
 - 检查和请求辅助功能权限；
-- 根据 Bundle ID `com.openai.codex` 查找 ChatGPT；
+- 根据 Bundle ID `com.openai.codex` 查找 Codex；
 - 使用 `AXObserver` 接收界面变化；
 - 遍历辅助功能控件树。
 
@@ -119,7 +119,7 @@ reasoning
 ## 扩展方式
 
 若要支持其他应用，应增加新的信号来源和分类规则，不要把另一个应用的特殊判断直接塞进
-ChatGPT 适配器。核心协议可以继续共用。
+Codex 适配器。核心协议可以继续共用。
 
 增加新状态时需要：
 

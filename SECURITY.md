@@ -8,7 +8,7 @@ For a report that does not contain private or security-sensitive information,
 open a regular GitHub issue with:
 
 - the macOS version;
-- the ChatGPT version;
+- the Codex version;
 - the AgentStateBridge commit or release;
 - steps that reproduce the problem using non-sensitive sample text.
 

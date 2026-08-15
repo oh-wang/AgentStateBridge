@@ -11,4 +11,4 @@ if [[ ! -x "${PET_APP}/Contents/MacOS/AgentStatePet" ]]; then
 fi
 
 open -b com.openai.codex
-open "${PET_APP}"
+"${SCRIPT_DIR}/launch-pet.sh"
