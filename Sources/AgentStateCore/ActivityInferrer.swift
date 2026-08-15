@@ -10,7 +10,7 @@ public enum ActivityInferrer {
             $0.semantic == .reasoningLabel
         }
 
-        // ChatGPT currently exposes “正在思考” as ordinary accessibility
+        // Codex currently exposes “正在思考” as ordinary accessibility
         // text rather than an ARIA live region. Requiring both the exact label
         // and the stop button keeps the signal useful without depending on
         // that missing attribute.

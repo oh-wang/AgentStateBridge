@@ -11,7 +11,7 @@ public enum AXTreeReadError: LocalizedError {
         case .permissionMissing:
             return "还没有获得“辅助功能”权限。"
         case let .cannotReadApplication(error):
-            return "无法读取 ChatGPT 的辅助功能界面（系统错误 \(error.rawValue)）。"
+            return "无法读取 Codex 的辅助功能界面（系统错误 \(error.rawValue)）。"
         }
     }
 }

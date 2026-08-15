@@ -68,14 +68,14 @@ private enum InspectionReadOutcome: Sendable {
     case failure(String, elapsedMilliseconds: Double)
 }
 
-/// Headless lifecycle for ChatGPT observation.
+/// Headless lifecycle for Codex observation.
 ///
 /// Both the diagnostic Inspector and an embedding macOS app can own this type.
 /// It deliberately has no SwiftUI dependency.
 @MainActor
 public final class AgentStateRuntime {
     public private(set) var permissionGranted = AccessibilityPermission.isGranted
-    public private(set) var chatGPT: ChatGPTRunningApplication?
+    public private(set) var codex: CodexRunningApplication?
     public private(set) var latestInspectionSnapshot: InspectionSnapshot?
     public private(set) var activity = ActivityAssessment.unknown
     public private(set) var currentEnvelope: AgentStateEnvelope?
@@ -89,6 +89,7 @@ public final class AgentStateRuntime {
     public var onStatusChange: (() -> Void)?
     public var onActivityChange: ((ActivityAssessment) -> Void)?
     public var onNotification: ((String) -> Void)?
+    public var onCodexTerminated: (() -> Void)?
 
     public var currentSnapshot: AgentStateRuntimeSnapshot? {
         currentEnvelope.map(AgentStateRuntimeSnapshot.init)
@@ -198,17 +199,17 @@ public final class AgentStateRuntime {
 
     public func refreshApplicationStatus() {
         permissionGranted = AccessibilityPermission.isGranted
-        chatGPT = ChatGPTApplicationLocator.runningApplication()
+        codex = CodexApplicationLocator.runningApplication()
 
         if !permissionGranted, isObserving {
             tearDownObservation()
             setActivity(.unknown)
             reportUnavailableOnce()
-        } else if chatGPT == nil, isObserving {
+        } else if codex == nil, isObserving {
             tearDownObservation()
         }
 
-        if chatGPT == nil {
+        if codex == nil {
             setActivity(ActivityInferrer.inactive)
         }
         notifyStatusChanged()
@@ -226,8 +227,8 @@ public final class AgentStateRuntime {
             notifyStatusChanged()
             return
         }
-        guard let chatGPT else {
-            runtimeErrorMessage = "没有找到正在运行的 ChatGPT。"
+        guard let codex else {
+            runtimeErrorMessage = "没有找到正在运行的 Codex。"
             setActivity(ActivityInferrer.inactive)
             notifyStatusChanged()
             return
@@ -236,8 +237,8 @@ public final class AgentStateRuntime {
         guard inspectionGate.request() else { return }
 
         let reader = self.reader
-        let processIdentifier = chatGPT.processIdentifier
-        let applicationVersion = chatGPT.version
+        let processIdentifier = codex.processIdentifier
+        let applicationVersion = codex.version
         let revealControlNames = self.revealControlNames
         let generation = inspectionGeneration
 
@@ -340,20 +341,20 @@ public final class AgentStateRuntime {
         guard isRunning,
               !isObserving,
               permissionGranted,
-              let chatGPT
+              let codex
         else {
             return
         }
 
         guard let newMonitor = AXChangeMonitor(
-            processIdentifier: chatGPT.processIdentifier,
+            processIdentifier: codex.processIdentifier,
             handler: { [weak self] name in
                 DispatchQueue.main.async {
                     self?.received(notification: name)
                 }
             }
         ) else {
-            runtimeErrorMessage = "无法开始观察 ChatGPT 的界面变化。"
+            runtimeErrorMessage = "无法开始观察 Codex 的界面变化。"
             setActivity(.unknown)
             reportUnavailableOnce()
             notifyStatusChanged()
@@ -486,7 +487,7 @@ public final class AgentStateRuntime {
         let envelope = statePublisher.makeEnvelope(
             assessment: assessment,
             previousState: previousState,
-            applicationVersion: chatGPT?.version
+            applicationVersion: codex?.version
         )
 
         var errors: [String] = socketStartupErrorMessage.map { [$0] } ?? []
@@ -534,9 +535,20 @@ public final class AgentStateRuntime {
                 forName: name,
                 object: nil,
                 queue: .main
-            ) { [weak self] _ in
+            ) { [weak self] notification in
+                let terminatedCodex = name == NSWorkspace.didTerminateApplicationNotification
+                    && (notification.userInfo?[
+                        NSWorkspace.applicationUserInfoKey
+                    ] as? NSRunningApplication)?.bundleIdentifier
+                    == CodexRunningApplication.bundleIdentifier
+
                 Task { @MainActor in
                     guard let self, self.isRunning else { return }
+
+                    if terminatedCodex {
+                        self.onCodexTerminated?()
+                    }
+
                     self.refreshApplicationStatus()
                     self.startObservingIfPossible()
                 }

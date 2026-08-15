@@ -14,7 +14,7 @@ struct AgentStateInspectorApp: App {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Agent State Inspector")
                     .font(.headline)
-                Text("自动观察 ChatGPT 状态，并通过本地文件和 Unix socket 提供给其他程序。")
+                Text("自动观察 Codex 状态，并通过本地文件和 Unix socket 提供给其他程序。")
                     .foregroundStyle(.secondary)
             }
             .padding(24)

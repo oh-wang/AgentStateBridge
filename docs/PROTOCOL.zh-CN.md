@@ -47,7 +47,7 @@
 
 | 值 | 含义 |
 |---|---|
-| `inactive` | ChatGPT 没有运行 |
+| `inactive` | Codex 没有运行 |
 | `idle` | 等待输入 |
 | `composing` | 用户正在输入 |
 | `reasoning` | 回答正文出现前正在思考 |

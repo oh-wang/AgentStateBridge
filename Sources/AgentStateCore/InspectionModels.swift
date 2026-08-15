@@ -74,7 +74,7 @@ public enum AgentActivityState: String, Codable, Equatable, Sendable {
         case .idle: "空闲"
         case .composing: "正在输入"
         case .reasoning: "思考中"
-        case .working: "工作中"
+        case .working: "输出中"
         case .completed: "刚刚完成"
         case .unknown: "暂时无法判断"
         }
